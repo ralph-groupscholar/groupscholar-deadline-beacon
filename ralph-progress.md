@@ -1,3 +1,6 @@
 # Ralph Progress Log
 
-- 2026-02-08: Initialized `groupscholar-deadline-beacon` CLI with Postgres-backed schema, seed data workflow, and digest formatting. Added TypeScript tooling, tests, and documentation.
+## 2026-02-08
+- Initialized Deadline Beacon CLI with deadline tracking, notification logging, and reporting.
+- Added Postgres/SQLite support with migrations and seed data.
+- Wrote a lightweight CLI test to validate core flows.

@@ -1,49 +1,54 @@
-# Group Scholar Deadline Beacon
+# GroupScholar Deadline Beacon
 
-Deadline Beacon is a Group Scholar CLI that tracks scholarship deadlines, keeps sponsor context, and produces a weekly outreach digest. It is designed for ops teams who need a lightweight command-line workflow with real data persistence in Postgres.
+Deadline Beacon is a PHP CLI for tracking scholarship deadlines, logging outreach reminders, and generating quick pipeline reports. It is built for Group Scholar operations so deadlines stay visible and notifications are auditable.
 
 ## Features
+- Track deadlines with status, timezone, and notes
+- Log notification events per deadline
+- Quick reporting for upcoming windows and recent outreach activity
+- Database-backed storage (PostgreSQL or SQLite)
 
-- Initialize and seed the production database schema.
-- Add scholarship deadlines with sponsor, cycle, and award metadata.
-- List and filter upcoming deadlines.
-- Generate a weekly digest grouped by week.
+## Tech
+- PHP 8+
+- PostgreSQL (production) or SQLite (local/testing)
+- Plain SQL migrations
 
-## Tech Stack
+## Setup
 
-- TypeScript (Node.js)
-- Postgres (pg)
-- Commander for CLI parsing
-- Vitest for unit tests
+### Environment
+Set one of the following:
+- `DEADLINE_BEACON_DSN` (preferred)
+- `DATABASE_URL` (Postgres URL)
+- `DEADLINE_BEACON_SQLITE_PATH` (local fallback)
 
-## Getting Started
+Optional for Postgres:
+- `DEADLINE_BEACON_DB_USER`
+- `DEADLINE_BEACON_DB_PASS`
 
-1. Install dependencies:
+### Migrations
+Run the migration SQL in `migrations/001_init.sql` against your database.
 
+### Seed data
+Run `scripts/seed.sql` to load example deadlines and notifications.
+
+### Production bootstrap
 ```bash
-npm install
+DEADLINE_BEACON_DSN="pgsql:host=db-acupinir.groupscholar.com;port=23947;dbname=postgres" \
+DEADLINE_BEACON_DB_USER="YOUR_USER" \
+DEADLINE_BEACON_DB_PASS="YOUR_PASS" \
+php scripts/bootstrap_db.php
 ```
 
-2. Configure database access by exporting either `GS_DB_URL` or the individual `GS_DB_*` environment variables (see `.env.example`).
-
-3. Initialize and seed the database:
-
+## Usage
 ```bash
-npm run db:init
-npm run db:seed
+bin/deadline-beacon.php list --within=45 --status=open
+bin/deadline-beacon.php add --title="Scholarship" --date=2026-03-01 --org="Org" --url="https://example.org" --tz="America/New_York"
+bin/deadline-beacon.php close --id=1 --status=closed
+bin/deadline-beacon.php log-notification --id=1 --channel=slack --message="Reminder sent"
+bin/deadline-beacon.php report --within=90
 ```
 
-4. Run the CLI:
-
+## Tests
 ```bash
-npm run dev -- list
-npm run dev -- upcoming --days 45
-npm run dev -- digest --days 30
-npm run dev -- add --name "Community Innovators" --deadline 2026-04-20 --cycle "Spring 2026" --amount 4000
-```
-
-## Testing
-
-```bash
-npm test
+php tests/test_cli.php
 ```
