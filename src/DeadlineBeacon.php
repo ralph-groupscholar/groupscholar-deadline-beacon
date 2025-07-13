@@ -32,6 +32,9 @@ class App
             case 'add':
                 $this->addDeadline($options);
                 break;
+            case 'update':
+                $this->updateDeadline($options);
+                break;
             case 'close':
                 $this->closeDeadline($options);
                 break;
@@ -239,6 +242,45 @@ class App
         echo "Deadline updated.\n";
     }
 
+    private function updateDeadline(array $options): void
+    {
+        if (empty($options['id'])) {
+            throw new RuntimeException('Missing required option --id');
+        }
+
+        $fields = [
+            'title' => 'title',
+            'org' => 'organization',
+            'url' => 'application_url',
+            'date' => 'deadline_date',
+            'tz' => 'timezone',
+            'status' => 'status',
+            'notes' => 'notes',
+        ];
+
+        $setParts = [];
+        $params = [':id' => (int)$options['id']];
+
+        foreach ($fields as $optionKey => $column) {
+            if (array_key_exists($optionKey, $options)) {
+                $paramKey = ':' . $column;
+                $setParts[] = "{$column} = {$paramKey}";
+                $params[$paramKey] = $options[$optionKey] === '' ? null : $options[$optionKey];
+            }
+        }
+
+        if (!$setParts) {
+            throw new RuntimeException('Provide at least one field to update.');
+        }
+
+        $setParts[] = 'updated_at = CURRENT_TIMESTAMP';
+
+        $sql = 'UPDATE deadline_beacon_deadlines SET ' . implode(', ', $setParts) . ' WHERE id = :id';
+        $this->db->execute($sql, $params);
+
+        echo "Deadline updated.\n";
+    }
+
     private function logNotification(array $options): void
     {
         $required = ['id', 'channel'];
@@ -309,6 +351,7 @@ class App
         echo "  overdue --days=30 --status=open\n";
         echo "  nudge --within=45 --stale-days=14 --status=open\n";
         echo "  add --title=\"Scholarship\" --date=YYYY-MM-DD [--org=Org] [--url=URL] [--tz=UTC] [--notes=Text]\n";
+        echo "  update --id=1 [--title=Name] [--date=YYYY-MM-DD] [--org=Org] [--url=URL] [--tz=UTC] [--status=open] [--notes=Text]\n";
         echo "  close --id=1 [--status=closed]\n";
         echo "  log-notification --id=1 --channel=slack [--message=Text]\n";
         echo "  report --within=90\n";

@@ -8,3 +8,4 @@
 - Added SQLite-specific migrations/seed data and expanded CLI tests for outreach nudges.
 - Added overdue deadline command plus report summary for open past-due deadlines.
 - Expanded CLI tests and README to cover overdue monitoring.
+- Added update command to edit deadline fields and extended CLI tests/documentation.

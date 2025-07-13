@@ -135,4 +135,11 @@ if (strpos($output, 'STEM Bridge Scholars') === false || strpos($output, 'Commun
     exit(1);
 }
 
+$output = run_app($app, ['cli', 'update', '--id=1', '--status=paused', '--notes=Paused for review']);
+$status = $db->fetchValue('SELECT status FROM deadline_beacon_deadlines WHERE id = 1');
+if ($status !== 'paused') {
+    fwrite(STDERR, "Expected update to change deadline status.\n");
+    exit(1);
+}
+
 echo "OK\n";

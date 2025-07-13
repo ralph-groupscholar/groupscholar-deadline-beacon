@@ -4,6 +4,7 @@ Deadline Beacon is a PHP CLI for tracking scholarship deadlines, logging outreac
 
 ## Features
 - Track deadlines with status, timezone, and notes
+- Update deadline details as requirements change
 - Log notification events per deadline
 - Surface deadlines that need a fresh outreach nudge
 - Highlight overdue open deadlines
@@ -51,6 +52,7 @@ bin/deadline-beacon.php list --within=45 --status=open
 bin/deadline-beacon.php overdue --days=30 --status=open
 bin/deadline-beacon.php nudge --within=45 --stale-days=14 --status=open
 bin/deadline-beacon.php add --title="Scholarship" --date=2026-03-01 --org="Org" --url="https://example.org" --tz="America/New_York"
+bin/deadline-beacon.php update --id=1 --status=paused --notes="Waiting on revised guidelines"
 bin/deadline-beacon.php close --id=1 --status=closed
 bin/deadline-beacon.php log-notification --id=1 --channel=slack --message="Reminder sent"
 bin/deadline-beacon.php report --within=90
